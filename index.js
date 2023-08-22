@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -28,13 +28,37 @@ async function run() {
         // Saving post in the db
         app.post('/posts', async (req, res) => {
             const data = req.body;
-            console.log(data);
-        })
+            const result = await postCollection.insertOne(data);
+            res.send(result);
+        });
 
         // Getting all the posts
         app.get('/posts', async (req, res) => {
             const posts = await postCollection.find({}).toArray();
             res.send(posts);
+        });
+
+        // Getting info of a specific post
+        app.get('/posts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const post = await postCollection.findOne(query);
+            res.send(post);
+        });
+
+        // for adding like on a post 
+        app.patch('/posts/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateInfos = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    like: updateInfos
+                }
+            }
+            const result = await postCollection.updateOne(filter, updateDoc, options)
+            res.send(result);
         });
     }
     finally {
