@@ -25,6 +25,12 @@ async function run() {
     try {
         const postCollection = client.db('social-media-app').collection('all-posts');
 
+        // Saving post in the db
+        app.post('/posts', async (req, res) => {
+            const data = req.body;
+            console.log(data);
+        })
+
         // Getting all the posts
         app.get('/posts', async (req, res) => {
             const posts = await postCollection.find({}).toArray();
