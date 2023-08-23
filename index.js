@@ -64,6 +64,21 @@ async function run() {
             res.send(result);
         });
 
+        // for adding comments
+        app.patch('/postscomments/:id', async (req, res) => {
+            const id = req.params.id;
+            const comment = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    comments: comment
+                }
+            }
+            const result = await postCollection.updateOne(filter, updateDoc, options)
+            res.send(result);
+        });
+
 
         // All operations related to user
 
