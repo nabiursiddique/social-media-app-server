@@ -64,6 +64,7 @@ async function run() {
             res.send(result);
         });
 
+
         // All operations related to user
 
         // saving user to the database
@@ -73,8 +74,32 @@ async function run() {
             res.send(result);
         });
 
+        // User collection 
 
+        // Getting the logged in user info
+        app.get('/users', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            res.send(user);
+        });
 
+        // Updating user informaitons
+        app.patch('/users', async (req, res) => {
+            const email = req.query.email;
+            const updateInfos = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updateInfos.name,
+                    address: updateInfos.address,
+                    university: updateInfos.university
+                }
+            }
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        });
 
     }
     finally {
