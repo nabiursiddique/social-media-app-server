@@ -24,6 +24,9 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         const postCollection = client.db('social-media-app').collection('all-posts');
+        const userCollection = client.db('social-media-app').collection('users');
+
+        // All operations related to posts
 
         // Saving post in the db
         app.post('/posts', async (req, res) => {
@@ -60,6 +63,19 @@ async function run() {
             const result = await postCollection.updateOne(filter, updateDoc, options)
             res.send(result);
         });
+
+        // All operations related to user
+
+        // saving user to the database
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await userCollection.insertOne(user);
+            res.send(result);
+        });
+
+
+
+
     }
     finally {
 
